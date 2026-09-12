@@ -35,6 +35,11 @@ ENGINEERING ████████████████████  100%
 
 ### Project Description
 
+A dustbin that watches you approach, judges your throw ("My grandmother
+throws better"), and runs every remote command through a mistranslation
+engine — OPEN closes, STOP speeds up. Its NORMAL MODE button works for
+4 seconds, then a hidden finger switches it back off.
+
 The USELESS TRASH BIN is a smart dustbin built to the standard of a real
 product and to the purpose of none. Two time-of-flight sensors, a servo-driven eyeball, an OLED
 face, addressable LEDs, I²S audio, a soft-close lid with two independent
