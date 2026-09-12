@@ -79,6 +79,13 @@ A bin with **executive function**.
 5. **It never hurts anyone.** This part is not a joke, and it is the only part
    of the machine that isn't.
 
+And it does all of that **in a voice you record yourself**. The bin has a real
+I²S speaker with thirteen replaceable clip slots; the rover has no speaker at
+all and instead makes *your phone* say it, through 31 uploadable events. The
+eye that tracks you is a servo and a time-of-flight sensor, not a camera — but
+if you want it to recognise a cup, an optional ESP32-CAM and a detector running
+in the browser will tell it so.
+
 ---
 
 ## 🖕 The punchline
@@ -186,10 +193,34 @@ optional extras). Full costed list with alternates and search links:
 | L298N motor driver | Any of the common red breakout boards |
 | 2 × geared DC motors | Whatever the chassis takes |
 | 6–12 V motor supply | Into the L298N's `+12V`. **Never** the ESP32's 5 V pin |
-| *(optional)* ESP32-CAM | `firmware/TrashBotCam/` — serves JPEGs the phone runs a detector on |
 
 That is the entire bill. No speaker, no display, no camera on the board — it
 borrows all three from your phone, and the dashboard says so in writing.
+
+**Machine C — TrashBot Cam** (optional second pair of eyes)
+
+| Part | Notes |
+|---|---|
+| AI-Thinker ESP32-CAM | OV2640 sensor, 4 MB PSRAM. Other modules have a different pin map — edit the top of the sketch |
+| 5 V supply that can actually deliver | Brownouts on Wi-Fi bursts are the classic ESP32-CAM fault |
+| ESP32-CAM-MB base, or a USB-UART | For programming: IO0 to GND during reset |
+| Wiring to the bin | **None.** It joins the bin's own access point and talks over Wi-Fi |
+
+It runs no detector itself and does not pretend to — it serves `/capture`
+(one fresh JPEG with permissive CORS), `/stream` (MJPEG) and `/status`. The
+phone does the thinking. Builds clean at 28% of a 3 MB app partition.
+
+**Machine D — UselessBox** (the philosophy, minimised)
+
+| Part | Notes |
+|---|---|
+| Digispark ATtiny85 | 16.5 MHz. ESP32 and Arduino Uno Q ports also included |
+| 1 × servo | Signal → P0. The arm that reaches out |
+| 1 × toggle switch | Across P2 (`INPUT_PULLUP`) and GND. The switch it exists to defeat |
+| Capacitor across 5 V/GND at the servo | Required past ~3 steps per 10 ms, or the board browns out and resets |
+
+Flip it four or more times within ten seconds of each other and the onboard LED
+goes solid: angry mode.
 
 **Tools required:** soldering iron with a heat-set insert tip, crimpers for
 JST-XH, a multimeter (the continuity checklist in
@@ -223,8 +254,26 @@ pio run -t uploadfs     # flash data/ to LittleFS   <-- do not skip this
 # --- The printed parts -----------------------------------------------------
 openscad -o lid_frame.stl -D 'part="lid_frame"' cad/lid_mechanism.scad
 
+# --- Machine C: the optional camera (PlatformIO) ---------------------------
+cd firmware/TrashBotCam && pio run -t upload    # 28% of a 3 MB app partition
+
 # --- Placeholder voice clips -----------------------------------------------
 python tools/make_wavs.py
+```
+
+### Give it your own voice
+
+```bash
+# BIN-CHAD: 13 named slots, 16-bit mono WAV, on the bin's own speaker.
+#   Record short clips - one second lands, three seconds kills the pace.
+#   Name them boot / detected / open / close / miss / success / angry /
+#   confused / laugh / denied / ai / error / shutdown, drop them into
+#   firmware/BinChad/data/, then: Tools -> ESP32 Sketch Data Upload
+
+# The rover: 31 events, uploaded from the phone, no reflash needed.
+#   Dashboard -> AUDIO tab -> UPLOAD (MP3/AAC/OGG/WAV, <= 512 KB each)
+#   Pick a clip from the dropdown on any event row. It saves immediately.
+#   TEST fires the real event so every connected phone plays it.
 ```
 
 ### Run
@@ -314,25 +363,162 @@ Everything runs off one seeded xorshift32 stream, printed at boot:
 Pin the seed in NVS to rehearse a demo or reproduce a complaint. Zero means
 "surprise me".
 
-### The phone is the speaker and the eyes
+**On the bin itself the same idea drives a thirteen-state mood machine** —
+`IDLE · CURIOUS · ALERT · HAPPY · CONFUSED · ANGRY · SHY · SARCASTIC ·
+SLEEPING · AI MODE · NORMAL MODE · USELESS MODE · ERROR` — fed by a miss
+counter and an anger accumulator (0–100, **+14 per miss**, −1 every 1.5 s, and
+*halved* by an obstruction event, because that is the one thing it feels
+genuinely bad about):
 
-The rover has neither. It sends a tiny *"play this"* message — over Wi-Fi,
-Bluetooth and USB simultaneously, all carrying the same sequence number so each
-sound plays exactly once — and whichever phone has the dashboard open plays the
-clip. 31 events, each mapped to a clip you upload from the AUDIO tab, stored on
-the bin's flash and cached in each phone's IndexedDB so it still works with the
-Wi-Fi off.
+| Trigger | What happens to it |
+|---|---|
+| 1st–2nd miss | Standard table — *"YOU MISSED." / "ALMOST."* |
+| 3rd miss | 55% chance of the annoyed table — *"AGAIN?"* |
+| 5th miss | Mood → `SARCASTIC` |
+| 10th miss, **or** anger ≥ 85 | Mood → `ANGRY`: red strobe, narrowed eye, *"ENOUGH."* |
+| 20 s in `ANGRY` with anger < 40 | Cools back to `IDLE` |
 
-The joke is structural: **it talks to you through the device you are trying to
-control it with.**
+`personality.cpp` owns the moods, the five counters and the line tables, and
+**commands no hardware at all** — it returns a decision and something to say,
+and other modules act on it. That separation is why the comedy can never reach
+the lid.
 
-Vision is the same trick in reverse. COCO-SSD under TensorFlow.js runs *in the
-browser* — on the phone's camera or on an ESP32-CAM's snapshots — and sends only
-the result. A person arriving fires `human_detected` and cheers it up. An object
-it hasn't announced in 8 s fires `object_detected` and confuses it. A source
-that goes quiet for 5 s is dropped and the telemetry says so, because stale
-numbers are never shown as current. **Nothing in the vision path can move a
-motor.**
+### 🗣️ What it actually says
+
+Every line is picked from a mood-specific table by the same seeded xorshift32,
+and `pick()` will never return the same line twice in a row:
+
+| Situation | The table it draws from |
+|---|---|
+| You missed | `YOU MISSED.` · `NICE THROW.` · `ALMOST.` · `SERIOUSLY?` · `I SAW THAT.` · `TRY AGAIN.` · `THAT WAS EMBARRASSING.` |
+| You keep missing | `AGAIN?` · `ARE YOU OKAY?` · `THIS IS A LOT OF MISSES.` |
+| You actually scored | `ACCEPTABLE.` · `FINE.` · `ADEQUATE.` · `I GUESS.` · `DON'T GET USED TO IT.` · `LUCKY.` |
+| You used the remote | `COMMAND REJECTED` · `NO.` · `I'D RATHER NOT.` · `INTERESTING REQUEST.` · `NOTED. IGNORED.` · `TRY ASKING NICELY.` |
+| You have pushed it too far | `ENOUGH.` · `STOP IT.` · `I AM A BIN, NOT A TOY.` |
+| Nobody is there | `SCANNING...` · `WAITING.` · `NOTHING TO DO.` · `I COULD BE ANYTHING.` · `STILL A BIN.` |
+| `AI MODE` theatre | `YOU SHOULD THROW BETTER.` · `USER: SUSPECTED` · `CONFIDENCE: NONE` · `RECOMMENDATION: STOP` |
+
+The text goes to the OLED face. The *sound* is the next section.
+
+### 🔊 The speaker, and your own voice in it
+
+The bin and the rover solve the same problem two completely different ways, and
+both of them let you put **your own recorded voice** in the machine.
+
+**On BIN-CHAD — a real speaker, on the board.** A MAX98357A I²S class-D amp
+drives a 4 Ω 3 W speaker from 16-bit mono WAVs in LittleFS. There are thirteen
+clip slots, and replacing any of them is a file copy:
+
+```
+boot · detected · open · close · miss · success · angry
+confused · laugh · denied · ai · error · shutdown
+```
+
+Drop `miss.wav` into `firmware/BinChad/data/`, hit **ESP32 Sketch Data Upload**,
+and that is now the bin's voice for every failed throw. `tools/make_wavs.py`
+generates placeholder tones so the machine is never silent while you are still
+recording the real ones.
+
+Two design details that matter more than they look:
+
+- **Audio never blocks.** WAVs are streamed `AUDIO_CHUNK_BYTES` per loop tick,
+  so the lid keeps checking for fingers, the eye keeps tracking and ESP-NOW
+  packets keep arriving *while* the bin is talking. A blocking `play()` would
+  mean a lid that stops looking for your hand mid-sentence.
+- **Clips must be short.** A one-second line lands. A three-second line kills
+  the pace and the audience stops watching the bin. That constraint is written
+  into the header file, not just the style guide.
+
+There is a second backend behind a compile-time switch — set `AUDIO_BACKEND` to
+`AUDIO_DFPLAYER` and the same thirteen clips come off a DFPlayer Mini and a
+microSD card over raw 10-byte UART frames, with no external library to go stale.
+And because it is BIN-CHAD: pressing **MUTE** on the remote calls
+`Audio::jokeMute()`, which turns the volume *up*.
+
+**On the rover — your phone is the speaker.** There is no amplifier and no
+speaker on that board, and no audio data ever leaves it. When something happens
+the firmware sends a tiny *"play this"* message naming the event and the clip,
+and every phone with the dashboard open plays it.
+
+| | |
+|---|---|
+| **Events** | **31** — person detected, person gone, object spotted, every command verdict, the emergency stop, every button, every mood change |
+| **Formats** | MP3, AAC, OGG, WAV — up to 512 KB per clip |
+| **Where clips live** | The bin's own flash under `/audio/`, so every phone gets the same set, plus a decoded copy in each phone's IndexedDB so it still plays with the Wi-Fi off |
+| **Naming** | Lower-cased and cleaned — `Hi Chellam I Love u.wav` becomes `hi_chellam_i_love_u.wav` |
+| **Rate limiting** | 1.5 s cooldown per event, 250 ms between any two. The emergency stop ignores both |
+| **If nothing is assigned** | Nothing is sent at all. Silence is a valid mapping |
+
+The two clips already in [`audio/`](audio/) ship inside the filesystem image:
+*"Hi Chellam I love you"* is wired to **Human detected**, and the AAC one to
+**Phone connected**. Neither is hard-coded — every one of the 31 rows is a
+dropdown in the AUDIO tab, saved the instant you pick it, with a **TEST** button
+that fires the real event through the bin so every connected phone plays it
+exactly as it will on the day.
+
+The same message goes out over **three links at once** — Wi-Fi (the WebSocket
+the page already uses), Bluetooth (NimBLE, no pairing) and USB (Web Serial on a
+laptop, WebUSB on Android via a CP2102/CH340 driver in `audio.js`) — all
+carrying the same sequence number, so a phone connected by two of them plays
+each sound exactly once. The BLE payload is `seq;eventId;clip` rather than JSON,
+because a phone that never negotiated a bigger MTU only ever sees the first
+20 bytes, and that is enough to look the clip up locally.
+
+The joke is structural: **it insults you through the device you are holding to
+control it.** Hand the dashboard URL to the room and it insults you in stereo,
+from the audience.
+
+### 👁️ The camera, and the eye that looks back
+
+Two separate things, and the project is careful not to confuse them.
+
+**The eye is a machine, not a camera.** A VL53L0X time-of-flight sensor aimed
+into the room finds you; two MG90S metal-gear servos pan and tilt a printed
+eyeball to track you; an SSD1306 OLED behind it draws the face. Metal gear
+matters here because the eye moves constantly. There is no image sensor in that
+loop at all — the bin tracks you with **distance**, which is why it works in a
+badly lit conference hall where a camera would not.
+
+**The camera is optional, and it runs nothing.** No detector runs on any ESP32
+in this project. An ESP32 cannot run a useful object detector, and this project
+does not fake sensors. So detection happens in the browser — **COCO-SSD under
+TensorFlow.js**, people plus 80 everyday objects (cup, bottle, phone, banana) —
+on one of two frame sources:
+
+| Source | How it works | What it needs |
+|---|---|---|
+| **The phone's own camera** | `getUserMedia`, rear camera, detector runs on the phone | Chrome's insecure-origin flag, because a camera API needs a secure page and `http://192.168.4.1` is not one |
+| **ESP32-CAM snapshots** | `firmware/TrashBotCam/` — an AI-Thinker ESP32-CAM (OV2640, 4 MB PSRAM) joins the bin's own access point and serves `/capture` with permissive CORS; the VISION tab polls it ~4×/s and draws the boxes on the picture | No flag. And the phone stays in your hand instead of being pointed at the room |
+
+The camera board also serves `/stream` (MJPEG, for a human to look at) and
+`/status` (camera ok, frame size, uptime, heap, PSRAM, RSSI). It is wired to the
+bin by **nothing** — it talks over Wi-Fi, on the bin's own AP, so the whole
+three-device system works in a room with no network at all.
+
+**What the bin does with what it sees** — and this is where vision meets
+personality:
+
+- A person **arriving** logs `HUMAN_DETECTED`, fires the `human_detected` sound
+  (your clip), raises happiness and drops boredom. A person merely *standing*
+  there is not news. Gone for 2.5 s logs `HUMAN_LOST`.
+- An **object** it has not announced in the last 8 s logs `OBJECT_DETECTED cup`,
+  fires `object_detected`, and confuses it slightly.
+- A source that goes quiet for **5 s** is dropped and the telemetry says so.
+  Stale numbers are never displayed as current.
+- Reports can also arrive without the browser at all: `POST /api/vision` over
+  Wi-Fi, or a plain text line on UART2 (`VISION persons=1 objects=cup conf=83`,
+  115200 baud, GPIO 16 RX / 17 TX). The bin does not care who ran the detector —
+  it just tells you the source in telemetry.
+
+**Nothing in the vision path can move a motor.** Detection is an input to the
+personality, exactly like PLEASE and SORRY, and it goes nowhere near the safety
+layer. A machine that starts driving because it thought it saw someone is the
+one kind of surprise this project does not make.
+
+Both borrowed subsystems are labelled honestly in the UI: the HW tab shows
+`CAMERA — BORROWED FROM THE PHONE` and `SPEAKER — BORROWED FROM THE PHONE`
+rather than claiming hardware that is not on the board, and reports separately
+whether a phone is actually doing each job *right now*.
 
 ### Safety, which is the one thing it is never sarcastic about
 
@@ -574,6 +760,8 @@ where the audience needs to see it *sometimes* obey to understand that it is
 | **The dashboard** | Flash the rover, join `TRASHBOT-SETUP`, open `http://192.168.4.1`. Six tabs, live at 10 Hz, on any phone in the room |
 | **Reproducible misbehaviour** | Pin the personality seed in NVS and the bin performs the identical sequence of wrong answers every run — rehearsable comedy |
 | **Sound through the audience** | Anyone with the dashboard open becomes a speaker. Hand out the URL and the bin insults you in stereo, from the crowd |
+| **Your own voice** | Record 13 short WAVs for the bin's onboard speaker, or upload clips to any of the rover's 31 events live from a phone, mid-demo, with no reflash |
+| **The camera, if you want it** | Power an ESP32-CAM, point the VISION tab at `http://trashcam.local/capture`, and watch COCO-SSD draw boxes on the bin's own view while the bin reacts to what it is told |
 | **The hidden rescue trigger** | A concealed button that forces a clean demo sequence if the room is badly lit or the ToF sensors are unhappy. Documented so *your* team knows, not the judges |
 | **The self-test** | Power on with the BOOT button held: every servo sweeps its endpoints, both ToF sensors report, the LEDs cycle, the display shows `healthSummary()` |
 
