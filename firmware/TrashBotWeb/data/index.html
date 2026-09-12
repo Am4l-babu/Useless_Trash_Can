@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0d0f11">
+<title>TRASHBOT CONTROL</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="bar">
+  <div class="brand">
+    <span class="glyph">&#128465;</span>
+    <span>TRASHBOT OS</span>
+    <span class="ver" id="version">v0.0.0</span>
+  </div>
+  <div class="bar-stats">
+    <span class="chip" id="link"><i class="dot"></i>OFFLINE</span>
+    <span class="chip" id="hdrMode">MODE &mdash;</span>
+    <span class="chip" id="hdrMood">MOOD &mdash;</span>
+  </div>
+  <button class="estop" id="estop">&#128721; EMERGENCY STOP</button>
+</header>
+
+<div class="banner" id="estopBanner" hidden>
+  <strong>EMERGENCY STOP ACTIVE</strong>
+  <span id="estopReason"></span>
+  <button id="resetSafety">RESET SAFETY SYSTEM</button>
+</div>
+
+<nav class="tabs" id="tabs">
+  <button class="tab active" data-tab="drive">DRIVE</button>
+  <button class="tab" data-tab="mind">MIND</button>
+  <button class="tab" data-tab="audio">AUDIO</button>
+  <button class="tab" data-tab="vision">VISION</button>
+  <button class="tab" data-tab="hardware">HW</button>
+  <button class="tab" data-tab="setup">SETUP</button>
+</nav>
+
+<main class="app">
+
+  <!-- ================= DRIVE ================= -->
+  <section class="panel active" data-panel="drive">
+
+    <div class="card status-card">
+      <div class="stat">
+        <label>STATUS</label>
+        <output id="statusText">CONNECTING</output>
+      </div>
+      <div class="stat">
+        <label>CURRENT ACTION</label>
+        <output id="actionText">&mdash;</output>
+      </div>
+      <div class="stat">
+        <label>SPEED REQ / ACT</label>
+        <output id="speedText">&mdash;</output>
+      </div>
+      <div class="stat">
+        <label>OBEDIENCE</label>
+        <output id="obedText">&mdash;</output>
+      </div>
+    </div>
+
+    <div class="card face-card">
+      <svg id="face" viewBox="0 0 220 150" aria-label="robot face">
+        <rect class="f-body" x="14" y="10" width="192" height="130" rx="14"/>
+        <rect class="f-slot" x="34" y="20" width="152" height="8" rx="4"/>
+        <g id="brows">
+          <line id="browL" x1="52"  y1="58" x2="92"  y2="58"/>
+          <line id="browR" x1="128" y1="58" x2="168" y2="58"/>
+        </g>
+        <g class="eyes">
+          <circle class="f-eye" cx="72"  cy="82" r="21"/>
+          <circle class="f-eye" cx="148" cy="82" r="21"/>
+          <circle class="f-pupil" id="pupilL" cx="72"  cy="82" r="9"/>
+          <circle class="f-pupil" id="pupilR" cx="148" cy="82" r="9"/>
+          <rect class="f-lid" id="lidL" x="51"  y="61" width="42" height="0"/>
+          <rect class="f-lid" id="lidR" x="127" y="61" width="42" height="0"/>
+        </g>
+        <path class="f-mouth" id="mouth" d="M78 118 H142"/>
+      </svg>
+      <div class="face-caption" id="faceCaption">BOOTING</div>
+    </div>
+
+    <div class="card control-card">
+      <div class="joystick" id="stick">
+        <div class="stick-ring"></div>
+        <div class="stick-cross"></div>
+        <div class="stick-knob" id="knob"></div>
+        <span class="stick-hint">HOLD TO DRIVE</span>
+      </div>
+
+      <div class="dpad">
+        <button class="dbtn" data-dir="fwd_left">&#8598;</button>
+        <button class="dbtn" data-dir="forward">&#9650;</button>
+        <button class="dbtn" data-dir="fwd_right">&#8599;</button>
+        <button class="dbtn" data-dir="left">&#9664;</button>
+        <button class="dbtn stop" data-stop="1">STOP</button>
+        <button class="dbtn" data-dir="right">&#9654;</button>
+        <button class="dbtn" data-dir="back_left">&#8601;</button>
+        <button class="dbtn" data-dir="backward">&#9660;</button>
+        <button class="dbtn" data-dir="back_right">&#8600;</button>
+      </div>
+
+      <div class="speed">
+        <label for="speed">SPEED <output id="speedOut">60%</output></label>
+        <input type="range" id="speed" min="10" max="100" step="5" value="60">
+      </div>
+    </div>
+
+    <div class="card feedback-card">
+      <div class="fb-row">
+        <div><label>REQUEST</label><output id="fbReq">&mdash;</output></div>
+        <div class="arrow">&rarr;</div>
+        <div><label>EXECUTED</label><output id="fbAct">&mdash;</output></div>
+      </div>
+      <div class="fb-status" id="fbStatus">AWAITING ORDERS</div>
+      <div class="why" id="whyBox" hidden>
+        <label>WHY?</label>
+        <p id="whyText"></p>
+      </div>
+    </div>
+
+    <div class="card buttons-card">
+      <div class="btn-row">
+        <button class="abtn" data-action="open">OPEN</button>
+        <button class="abtn" data-action="close">CLOSE</button>
+      </div>
+      <div class="lid-note" id="lidNote">LID: NOT INSTALLED</div>
+      <div class="btn-row">
+        <button class="abtn" data-action="please">&#128591; PLEASE</button>
+        <button class="abtn" data-action="sorry">&#129402; SORRY</button>
+        <button class="abtn danger" data-action="panic">PANIC</button>
+      </div>
+      <div class="btn-row">
+        <button class="abtn wide" data-action="do_nothing">DO NOTHING</button>
+      </div>
+      <button class="normal-btn" data-action="normal_mode">
+        <span class="n-led"></span> RETURN TO NORMAL
+      </button>
+      <div class="normal-note" id="normalNote"></div>
+    </div>
+
+    <div class="card modes-card">
+      <label class="card-title">DRIVE MODE</label>
+      <div class="mode-grid" id="modeGrid">
+        <button class="mbtn" data-mode="normal">NORMAL<small>debug</small></button>
+        <button class="mbtn" data-mode="uncooperative">UNCOOPERATIVE</button>
+        <button class="mbtn" data-mode="reverse">REVERSE</button>
+        <button class="mbtn" data-mode="chaos">CHAOS</button>
+        <button class="mbtn" data-mode="drunk">DRUNK</button>
+        <button class="mbtn" data-mode="lazy">LAZY</button>
+        <button class="mbtn" data-mode="angry">ANGRY</button>
+        <button class="mbtn" data-mode="sleep">SLEEP</button>
+        <button class="mbtn" data-mode="panic">PANIC</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= MIND ================= -->
+  <section class="panel" data-panel="mind">
+
+    <div class="card">
+      <label class="card-title">PERSONALITY</label>
+      <div class="traits" id="traits"></div>
+    </div>
+
+    <div class="card">
+      <label class="card-title">MOTOR OUTPUT</label>
+      <div class="motorbars">
+        <div class="mrow"><span>LEFT</span><div class="mtrack"><div class="mfill" id="mLeft"></div></div><output id="mLeftVal">0%</output></div>
+        <div class="mrow"><span>RIGHT</span><div class="mtrack"><div class="mfill" id="mRight"></div></div><output id="mRightVal">0%</output></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label class="card-title">COMMAND HISTORY</label>
+      <table class="history"><tbody id="history">
+        <tr class="empty"><td colspan="3">no commands yet</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="card log-card">
+      <label class="card-title">EVENT LOG</label>
+      <div class="log" id="log"></div>
+    </div>
+
+  </section>
+
+  <!-- ================= AUDIO ================= -->
+  <section class="panel" data-panel="audio">
+
+    <div class="card">
+      <label class="card-title">THIS DEVICE IS THE SPEAKER</label>
+      <p class="note">
+        The bin has no speaker. Sounds play from whatever has this page open
+        &mdash; this phone, or a laptop. Browsers refuse to play anything until
+        you have tapped once, so tap this first.
+      </p>
+      <button class="save" id="audioUnlock">ENABLE SOUND ON THIS DEVICE</button>
+      <div class="slider-row" style="margin-top:14px">
+        <label for="volume">VOLUME <output id="volumeOut">80%</output></label>
+        <input type="range" id="volume" min="0" max="100" step="5" value="80">
+      </div>
+      <div class="kv" id="audioState"></div>
+      <div class="now-playing" id="nowPlaying">NOTHING PLAYING</div>
+    </div>
+
+    <div class="card">
+      <label class="card-title">TRIGGER LINKS</label>
+      <p class="note">
+        The bin only ever sends a tiny <b>play this</b> message; the clip is
+        already on the phone. Any link that is up will deliver it, and a
+        message that arrives twice plays once.
+      </p>
+      <div class="links">
+        <div class="linkrow">
+          <b>WI-FI</b><em id="lnkWifi">&mdash;</em>
+          <span>The WebSocket this page already uses.</span>
+        </div>
+        <div class="linkrow">
+          <b>BLUETOOTH</b><em id="lnkBt">&mdash;</em>
+          <button class="cbtn" id="btConnect">CONNECT</button>
+          <span id="btNote">BLE, no pairing. Also carries commands, so the bin drives with no Wi-Fi.</span>
+        </div>
+        <div class="linkrow">
+          <b>USB</b><em id="lnkUsb">&mdash;</em>
+          <button class="cbtn" id="usbConnect">CONNECT</button>
+          <span id="usbNote">The bin's own USB port. Web Serial on a laptop, WebUSB on Android.</span>
+        </div>
+      </div>
+      <div class="secure-note" id="secureNote" hidden>
+        <b>Bluetooth and USB need a &ldquo;secure&rdquo; page and this one is plain
+        <code>http://</code>.</b> Chrome will still allow it if you tell it to, once per device:
+        open <code>chrome://flags/#unsafely-treat-insecure-origin-as-secure</code>,
+        enter <code id="originText"></code>, set it to <b>Enabled</b>, relaunch.
+        Wi-Fi works regardless.
+      </div>
+    </div>
+
+    <div class="card">
+      <label class="card-title">CLIP LIBRARY</label>
+      <p class="note">
+        Stored on the bin&rsquo;s flash and shared by every phone. Short clips
+        only: <b><span id="clipLimit">512 KB</span></b> each. MP3, AAC, OGG or WAV.
+        Names are lower-cased and spaces become underscores.
+      </p>
+      <div class="upload">
+        <input type="file" id="clipFile" accept="audio/*,.wav,.mp3,.aac,.m4a,.ogg,.opus,.webm,.flac">
+        <button class="cbtn" id="clipUpload">UPLOAD</button>
+      </div>
+      <div class="kv" id="fsInfo"></div>
+      <div class="cliplist" id="clipList"><div class="empty">no clips yet</div></div>
+    </div>
+
+    <div class="card">
+      <label class="card-title">WHAT PLAYS WHEN</label>
+      <p class="note">
+        Assign a clip to each thing the bin does. <b>TEST</b> plays it through
+        every connected phone, exactly the way the real event would.
+      </p>
+      <div class="eventmap" id="eventMap"></div>
+    </div>
+
+  </section>
+
+  <!-- ================= VISION ================= -->
+  <section class="panel" data-panel="vision">
+
+    <div class="card">
+      <label class="card-title">EYES</label>
+      <p class="note">
+        Detection runs <b>in this browser</b> (TensorFlow.js, COCO-SSD: people
+        plus 80 everyday objects). The bin is told what was seen. The model is
+        downloaded from the internet the first time and cached after that.
+      </p>
+      <div class="vsrc">
+        <label class="switch"><input type="radio" name="vsrc" value="phone" checked> THIS DEVICE&rsquo;S CAMERA</label>
+        <label class="switch"><input type="radio" name="vsrc" value="cam"> ESP32-CAM SNAPSHOTS</label>
+      </div>
+      <div class="wifi" id="camUrlRow" hidden>
+        <input type="text" id="camUrl" placeholder="http://trashcam.local" autocomplete="off">
+      </div>
+      <div class="btn-row">
+        <button class="cbtn" id="visionStart">START</button>
+        <button class="cbtn" id="visionStop" disabled>STOP</button>
+      </div>
+      <div class="kv" id="visionState"></div>
+      <div class="secure-note" id="visionSecureNote" hidden>
+        <b>The phone camera needs a &ldquo;secure&rdquo; page.</b> Either use the
+        ESP32-CAM source, or allow this origin once in
+        <code>chrome://flags/#unsafely-treat-insecure-origin-as-secure</code>.
+      </div>
+    </div>
+
+    <div class="card viewport-card">
+      <div class="viewport">
+        <video id="camVideo" playsinline muted hidden></video>
+        <img id="camImg" alt="" hidden>
+        <canvas id="camCanvas" width="320" height="240"></canvas>
+      </div>
+      <div class="kv" id="visionSeen"></div>
+    </div>
+
+    <div class="card">
+      <label class="card-title">WHAT THE BIN THINKS IT SEES</label>
+      <p class="note">
+        Reported by the bin from its own state, so it is the same on every
+        phone. A person <b>arriving</b> is an event; standing still is not.
+      </p>
+      <div class="kv" id="visionBin"></div>
+    </div>
+
+  </section>
+
+  <!-- ================= HARDWARE ================= -->
+  <section class="panel" data-panel="hardware">
+    <div class="card">
+      <label class="card-title">HARDWARE</label>
+      <p class="note">
+        Nothing on this board can electrically detect a passive part, so
+        nothing here claims to. <b>CONFIGURED</b> means the firmware is driving
+        those pins. <b>ONLINE</b> is only used where the state is genuinely
+        observable.
+      </p>
+      <div class="hwlist" id="hwlist"></div>
+    </div>
+
+    <div class="card">
+      <label class="card-title">LINK</label>
+      <div class="kv" id="linkInfo"></div>
+    </div>
+
+    <div class="card">
+      <label class="card-title">BORROWED FROM THE PHONE</label>
+      <p class="note">
+        The bin has no camera and no speaker. It borrows both from whichever
+        phone has this page open, and reports here whether that is happening
+        right now.
+      </p>
+      <div class="future">
+        <div class="fbox" id="hwVision">VISION<small>no source reporting</small></div>
+        <div class="fbox" id="hwAudio">AUDIO<small>no phone has unlocked sound</small></div>
+        <div class="fbox">TRASH BASKETBALL<small>needs the throat sensor</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SETUP ================= -->
+  <section class="panel" data-panel="setup">
+
+    <div class="card">
+      <label class="card-title">MOTOR CALIBRATION</label>
+      <p class="note">
+        Jogs run one motor for up to 2 s and stop themselves. If a motor turns
+        the wrong way, set its INVERT here rather than rewiring &mdash; unless
+        it is easier to swap the two OUT wires, which is also fine.
+      </p>
+      <div class="caljog">
+        <div>
+          <label>LEFT MOTOR</label>
+          <div class="btn-row">
+            <button class="cbtn" data-jog="left" data-jdir="reverse">REVERSE</button>
+            <button class="cbtn" data-jog="left" data-jdir="stop">STOP</button>
+            <button class="cbtn" data-jog="left" data-jdir="forward">FORWARD</button>
+          </div>
+          <label class="switch"><input type="checkbox" id="invL"> INVERT LEFT</label>
+        </div>
+        <div>
+          <label>RIGHT MOTOR</label>
+          <div class="btn-row">
+            <button class="cbtn" data-jog="right" data-jdir="reverse">REVERSE</button>
+            <button class="cbtn" data-jog="right" data-jdir="stop">STOP</button>
+            <button class="cbtn" data-jog="right" data-jdir="forward">FORWARD</button>
+          </div>
+          <label class="switch"><input type="checkbox" id="invR"> INVERT RIGHT</label>
+        </div>
+      </div>
+
+      <div class="slider-row">
+        <label for="maxDuty">MAX DUTY <output id="maxDutyOut">200</output></label>
+        <input type="range" id="maxDuty" min="40" max="255" value="200">
+      </div>
+      <div class="slider-row">
+        <label for="minDuty">MIN DUTY <output id="minDutyOut">70</output></label>
+        <input type="range" id="minDuty" min="0" max="200" value="70">
+      </div>
+      <div class="slider-row">
+        <label for="accel">ACCELERATION <output id="accelOut">12</output></label>
+        <input type="range" id="accel" min="1" max="60" value="12">
+      </div>
+      <div class="slider-row">
+        <label for="trim">STRAIGHTNESS TRIM <output id="trimOut">0</output></label>
+        <input type="range" id="trim" min="-20" max="20" value="0">
+      </div>
+      <button class="save" id="saveCal">SAVE TO NVS</button>
+    </div>
+
+    <div class="card">
+      <label class="card-title">NETWORK</label>
+      <p class="note">
+        Stored in NVS. The board restarts to apply them. If the join fails it
+        falls back to its own access point, so it cannot lock you out.
+      </p>
+      <form id="wifiForm" class="wifi">
+        <input type="text" id="ssid" placeholder="SSID" maxlength="32" autocomplete="off">
+        <input type="password" id="pass" placeholder="password" maxlength="63" autocomplete="off">
+        <button type="submit">SAVE &amp; RESTART</button>
+      </form>
+      <div class="kv" id="wifiResult"></div>
+    </div>
+
+    <div class="card">
+      <label class="card-title">DIAGNOSTICS</label>
+      <div class="kv" id="diag"></div>
+      <p class="note">
+        The personality seed is printed at boot. Behaviour is deterministic
+        for a given seed, so a demo can be rehearsed and a complaint can be
+        reproduced.
+      </p>
+    </div>
+
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+<script src="audio.js"></script>
+<script src="vision.js"></script>
+</body>
+</html>
