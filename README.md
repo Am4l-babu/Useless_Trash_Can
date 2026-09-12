@@ -6,6 +6,10 @@
 
 ### The Uncooperative Waste Management System
 
+**"നോർമൽ ആയിട്ട് നടിക്കും, പിന്നെ പണി തരും!"**
+*(Normal aayittu nadikkum, pinne pani tharum! — "Acts normal for a bit, then
+messes with you.")*
+
 > A trash can that is technically intelligent and deliberately unhelpful.
 > It sees you. It judges your throw. It takes orders from a large industrial
 > remote control and does the opposite of all of them. And when you press the
@@ -29,16 +33,16 @@ ENGINEERING ████████████████████  100%
 ### Team Name: USELESS TRASH BIN
 
 ### Team Members
-- **Team Lead:** Amal Babu - _[your college]_
+- **Team Lead:** Amal Babu - ASIET
 - Solo participation. Firmware, CAD, wiring, dashboard, sound engine, vision
   intake and every document in this repository — all mine.
 
 ### Project Description
 
-A dustbin that watches you approach, judges your throw ("My grandmother
-throws better"), and runs every remote command through a mistranslation
-engine — OPEN closes, STOP speeds up. Its NORMAL MODE button works for
-4 seconds, then a hidden finger switches it back off.
+A dustbin that watches you approach, judges your throw, and disobeys its own
+remote — OPEN closes, STOP speeds up. NORMAL MODE works for 4 seconds, then a
+hidden finger flips it back off. **Fully working code, flashed and running on
+real hardware** — not a mock-up.
 
 The USELESS TRASH BIN is a smart dustbin built to the standard of a real
 product and to the purpose of none. Two time-of-flight sensors, a servo-driven eyeball, an OLED
