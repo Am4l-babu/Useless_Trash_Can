@@ -1,7 +1,7 @@
 // =============================================================================
 //  l298n_motor_test.ino - standalone bring-up test for Arduino UNO Q + L298N.
 //
-//  Not part of the BIN-CHAD build (that uses servos, not a DC motor driver).
+//  Not part of the USELESS TRASH BIN build (that uses servos, not a DC motor driver).
 //  This is a bench sketch to confirm wiring before the L298N goes into any
 //  larger project: each motor runs forward, stops, runs reverse, stops, then
 //  both motors run together. Watch the motors and read the Serial monitor

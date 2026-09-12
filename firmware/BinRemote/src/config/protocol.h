@@ -1,5 +1,5 @@
 // =============================================================================
-//  protocol.h - ESP-NOW link between BIN CONTROL SYSTEM v0.0001 and BIN-CHAD.
+//  protocol.h - ESP-NOW link between BIN CONTROL SYSTEM v0.0001 and USELESS TRASH BIN.
 //
 //  THIS FILE IS SHARED. It exists twice, byte-identical:
 //      firmware/BinChad/src/remote/protocol.h
@@ -15,7 +15,7 @@
 #define BINCHAD_PROTO_VERSION 1
 
 // Device id, shared by both ends. A packet with any other id is ignored,
-// so two BIN-CHADs can run in the same room by giving each pair its own id.
+// so two of these can run in the same room by giving each pair its own id.
 #define BINCHAD_DEVICE_ID 0x2A
 
 // ---------------------------------------------------------------------------

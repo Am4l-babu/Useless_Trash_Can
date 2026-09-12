@@ -1,5 +1,5 @@
 // =============================================================================
-//  display.h - 0.96" SSD1306, used as BIN-CHAD's face and status screen.
+//  display.h - 0.96" SSD1306, used as USELESS TRASH BIN's face and status screen.
 //
 //  Three render modes:
 //    FACE      an animated eye that blinks, narrows and looks around

@@ -73,7 +73,7 @@ def save(fig, name):
 
 # ===========================================================================
 def architecture():
-    fig, ax = canvas(11, 7.6, "BIN-CHAD system architecture",
+    fig, ax = canvas(11, 7.6, "USELESS TRASH BIN system architecture",
                      "ESP32-S3 main controller - ESP-NOW link to a dedicated remote - no cloud, no router, no app")
     ax.set_xlim(0, 11); ax.set_ylim(0, 7.6)
 
@@ -173,7 +173,7 @@ def wiring():
 
 # ===========================================================================
 def state_machine():
-    fig, ax = canvas(12, 8.0, "BIN-CHAD main state machine",
+    fig, ax = canvas(12, 8.0, "USELESS TRASH BIN main state machine",
                      "Every transition is millis()-driven. Nothing blocks. Safety transitions (red) preempt all others.")
     ax.set_xlim(0, 12); ax.set_ylim(0, 8)
 

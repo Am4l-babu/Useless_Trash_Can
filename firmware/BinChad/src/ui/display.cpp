@@ -185,9 +185,12 @@ void Display::showProgress(const char *label, uint8_t percent) {
 void Display::bootScreen() {
     if (!_ready) return;
     oled.clearDisplay();
-    drawCentered("BIN-CHAD", 6, 2);
-    drawCentered("booting...", 30, 1);
-    drawCentered("v0.0001", 50, 1);
+    // Two lines: at size 2 a glyph is 12 px wide, so 17 characters would be
+    // 204 px on a 128 px panel. "TRASH BIN" is 108 px and just fits.
+    drawCentered("USELESS", 2, 2);
+    drawCentered("TRASH BIN", 20, 2);
+    drawCentered("booting...", 42, 1);
+    drawCentered("v0.0001", 54, 1);
     oled.display();
     _mode = MODE_SELFTEST;
     _selfTestRow = 0;

@@ -1,5 +1,5 @@
 // =============================================================================
-//  BIN-CHAD  -  The Uncooperative Waste Management System
+//  USELESS TRASH BIN  -  The Uncooperative Waste Management System
 //  Main controller firmware for ESP32-S3.
 //
 //  Board:   ESP32S3 Dev Module
@@ -62,7 +62,7 @@ void setup() {
     Serial.begin(SERIAL_BAUD);
     delay(150);                       // let USB CDC enumerate, boot only
     Serial.println();
-    Serial.println(F("=== BIN-CHAD v0.0001 ==="));
+    Serial.println(F("=== USELESS TRASH BIN v0.0001 ==="));
 
 #if USE_NORMAL_LAMP
     pinMode(PIN_NORMAL_LAMP, OUTPUT);

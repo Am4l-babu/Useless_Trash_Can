@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-verify_project.py - static consistency checks for the BIN-CHAD repo.
+verify_project.py - static consistency checks for the USELESS TRASH BIN repo.
 
     python tools/verify_project.py
 

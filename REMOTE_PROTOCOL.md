@@ -1,6 +1,6 @@
 # REMOTE PROTOCOL
 
-ESP-NOW link between **BIN CONTROL SYSTEM v0.0001** and **BIN-CHAD**.
+ESP-NOW link between **BIN CONTROL SYSTEM v0.0001** and **USELESS TRASH BIN**.
 
 Chosen over Wi-Fi/MQTT because it is peer-to-peer, needs no router, no
 credentials and no association, and delivers a keypress in single-digit

@@ -1,5 +1,5 @@
 // =============================================================================
-//  settings.h - every tunable number in BIN-CHAD lives here.
+//  settings.h - every tunable number in USELESS TRASH BIN lives here.
 //  Calibration procedure: see docs -> BUILD_GUIDE.md section "Calibration".
 // =============================================================================
 #pragma once

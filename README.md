@@ -2,7 +2,7 @@
 
 
 
-# BIN-CHAD 🗑️
+# USELESS TRASH BIN 🗑️
 
 ### The Uncooperative Waste Management System
 
@@ -26,7 +26,7 @@ ENGINEERING ████████████████████  100%
 
 ## Basic Details
 
-### Team Name: BIN-CHAD
+### Team Name: USELESS TRASH BIN
 
 ### Team Members
 - **Team Lead:** Amal Babu - _[your college]_
@@ -35,8 +35,8 @@ ENGINEERING ████████████████████  100%
 
 ### Project Description
 
-BIN-CHAD is a smart dustbin built to the standard of a real product and to the
-purpose of none. Two time-of-flight sensors, a servo-driven eyeball, an OLED
+The USELESS TRASH BIN is a smart dustbin built to the standard of a real
+product and to the purpose of none. Two time-of-flight sensors, a servo-driven eyeball, an OLED
 face, addressable LEDs, I²S audio, a soft-close lid with two independent
 obstruction channels, a peer-to-peer ESP-NOW remote, 24 custom 3D-printed
 parts and a seven-trait personality engine — all of it wired together so the
@@ -155,7 +155,7 @@ in the build does the most important job in it.*
 
 ### For Hardware
 
-**Machine A — BIN-CHAD** (the bin itself)
+**Machine A — USELESS TRASH BIN** (the bin itself)
 
 | Category | Part | Qty | Specification |
 |---|---|---:|---|
@@ -266,7 +266,7 @@ python tools/make_wavs.py
 ### Give it your own voice
 
 ```bash
-# BIN-CHAD: 13 named slots, 16-bit mono WAV, on the bin's own speaker.
+# The bin: 13 named slots, 16-bit mono WAV, on its own speaker.
 #   Record short clips - one second lands, three seconds kills the pace.
 #   Name them boot / detected / open / close / miss / success / angry /
 #   confused / laugh / denied / ai / error / shutdown, drop them into
@@ -407,7 +407,7 @@ The text goes to the OLED face. The *sound* is the next section.
 The bin and the rover solve the same problem two completely different ways, and
 both of them let you put **your own recorded voice** in the machine.
 
-**On BIN-CHAD — a real speaker, on the board.** A MAX98357A I²S class-D amp
+**On the bin — a real speaker, on the board.** A MAX98357A I²S class-D amp
 drives a 4 Ω 3 W speaker from 16-bit mono WAVs in LittleFS. There are thirteen
 clip slots, and replacing any of them is a file copy:
 
@@ -434,7 +434,7 @@ Two design details that matter more than they look:
 There is a second backend behind a compile-time switch — set `AUDIO_BACKEND` to
 `AUDIO_DFPLAYER` and the same thirteen clips come off a DFPlayer Mini and a
 microSD card over raw 10-byte UART frames, with no external library to go stale.
-And because it is BIN-CHAD: pressing **MUTE** on the remote calls
+And because it is what it is: pressing **MUTE** on the remote calls
 `Audio::jokeMute()`, which turns the volume *up*.
 
 **On the rover — your phone is the speaker.** There is no amplifier and no
@@ -788,8 +788,8 @@ de-duplication, a truncated BLE payload resolving through the map, multipart
 upload with name sanitising, delete-with-unassign, and the VISION tab loading
 COCO-SSD and reporting at ~4 detections/s.
 
-**Not verified in the development environment:** the BIN-CHAD and BinRemote
-firmware was not compiled and the OpenSCAD was not rendered there — no toolchain
+**Not verified in the development environment:** the bin and remote firmware
+was not compiled and the OpenSCAD was not rendered there — no toolchain
 for either was available on that machine — and neither the BLE/USB links nor an
 ESP32-CAM were exercised against real devices. Every module was written against
 the documented library APIs and reviewed by hand. Treat the first flash of an
@@ -854,9 +854,12 @@ comedy is architecturally forbidden from touching.
 None of it matters. That is the point. The engineering is the joke, and the joke
 is only funny if the engineering is real.
 
-The bin answers to **BIN-CHAD**. It has also been called TrashGPT, BIN.exe,
-RejectBin, Garbage Intelligence and The Refuser. Rename it in
-`display.cpp::bootScreen()` and on the remote's faceplate.
+The bin answers to the **USELESS TRASH BIN**. Along the way it has also been
+called BIN-CHAD, TrashGPT, BIN.exe, RejectBin, Garbage Intelligence and The
+Refuser. Rename it in `display.cpp::bootScreen()` and on the remote's
+faceplate — the firmware folders still carry the old working name, `BinChad`,
+because Arduino couples a sketch folder to its `.ino` and renaming it buys
+nothing but broken paths.
 
 ---
 Made with ❤️ at TinkerHub Useless Projects

@@ -1,5 +1,5 @@
 // =============================================================================
-//  pins.h - BIN-CHAD main controller GPIO map
+//  pins.h - USELESS TRASH BIN main controller GPIO map
 //  Target: ESP32-S3-DevKitC-1 (N8R2 / N16R8), 44-pin module
 // =============================================================================
 //

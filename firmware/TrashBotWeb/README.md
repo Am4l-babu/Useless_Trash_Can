@@ -14,10 +14,10 @@ OBEDIENCE        4%
 ENGINEERING    100%
 ```
 
-This is a **separate machine** from BIN-CHAD. BIN-CHAD is an ESP32-S3 with
-servos, sensors and an ESP-NOW link to a physical remote. This is a plain
-ESP32 driving an L298N and two DC motors over Wi-Fi. They share no pins, no
-protocol and no firmware.
+This is a **separate machine** from the USELESS TRASH BIN, which is an
+ESP32-S3 with servos, sensors and an ESP-NOW link to a physical remote. This
+is a plain ESP32 driving an L298N and two DC motors over Wi-Fi. They share no
+pins, no protocol and no firmware.
 
 The phone is also the **speaker** and the **eyes**. The bin has neither. It
 sends a tiny "play this" message (over Wi-Fi, Bluetooth and USB, all at once)

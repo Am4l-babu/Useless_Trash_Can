@@ -1,9 +1,9 @@
 // =============================================================================
 //  pins.h - GPIO map for TRASHBOT WEB REMOTE (plain ESP32 dev module).
 //
-//  This is NOT the BIN-CHAD pin map. BIN-CHAD is an ESP32-S3 driving servos;
-//  this board is a classic ESP32 driving an L298N and two DC motors. The two
-//  firmwares share no pins, no protocol and no wiring.
+//  This is NOT the USELESS TRASH BIN pin map. That bin is an ESP32-S3 driving
+//  servos; this board is a classic ESP32 driving an L298N and two DC motors.
+//  The two firmwares share no pins, no protocol and no wiring.
 //
 //  The assignment below is the one already proven on the bench by
 //  tests/l298n_motor_test - do not renumber it without re-running that sketch.

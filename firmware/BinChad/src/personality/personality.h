@@ -1,5 +1,5 @@
 // =============================================================================
-//  personality.h - what BIN-CHAD is currently feeling, and how that changes
+//  personality.h - what USELESS TRASH BIN is currently feeling, and how that changes
 //  what the rest of the machine does.
 //
 //  This module owns:

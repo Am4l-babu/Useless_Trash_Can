@@ -1,5 +1,5 @@
 // =============================================================================
-//  sensors.h - all of BIN-CHAD's perception, such as it is.
+//  sensors.h - all of USELESS TRASH BIN's perception, such as it is.
 //
 //  Two VL53L0X time-of-flight sensors:
 //    THROAT   - points straight down the bin opening. Detects the object

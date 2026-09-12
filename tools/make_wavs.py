@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-make_wavs.py - generate placeholder sound effects for BIN-CHAD.
+make_wavs.py - generate placeholder sound effects for USELESS TRASH BIN.
 
     python tools/make_wavs.py
 
