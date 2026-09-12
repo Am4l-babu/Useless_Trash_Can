@@ -20,6 +20,8 @@ OBEDIENCE   █░░░░░░░░░░░░░░░░░░░    4%
 ENGINEERING ████████████████████  100%
 ```
 
+📸🎬 **[Build photos and demo videos](https://drive.google.com/drive/folders/1UGcReMnnkRWwXgr4NhLED4XH4fbJSmqP?usp=sharing)** · 🖥️ [Dashboard screenshots](#screenshots) · 🔌 [Wiring](WIRING.md) · 📍 [Pinout](PINOUT.md) · 🧾 [BOM](BOM.csv)
+
 ---
 
 ## Basic Details
@@ -723,11 +725,12 @@ margin     = 4.7 ×
 The margin is generous on purpose: it covers a stiff hinge, a cold servo, a
 sagging 5 V rail, and somebody resting a hand on the lid.
 
-> **Photographs of the physical build and the finished machine go here.** The
-> repository currently ships the parametric CAD, the renders above and the
-> complete assembly procedure in [BUILD_GUIDE.md](BUILD_GUIDE.md); it does not
-> ship photographs of assembled hardware, and it is not going to pretend
-> otherwise. See *Honest status* below.
+### 📸 Photographs of the real build
+
+**→ [Build photos and demo videos — Google Drive](https://drive.google.com/drive/folders/1UGcReMnnkRWwXgr4NhLED4XH4fbJSmqP?usp=sharing)**
+
+Components laid out, the machine going together, and the finished bin — plus the
+demo footage below. The renders above are the CAD; this is the hardware.
 
 ---
 
@@ -735,7 +738,10 @@ sagging 5 V rail, and somebody resting a hand on the lid.
 
 ### Video
 
-> _[paste your demo video link here]_
+**→ [Demo videos and build photos — Google Drive](https://drive.google.com/drive/folders/1UGcReMnnkRWwXgr4NhLED4XH4fbJSmqP?usp=sharing)**
+
+The bin noticing you, judging a missed throw, ignoring the remote, and the
+finger coming out of the front panel to switch NORMAL MODE back off.
 
 **The two-minute script it is shot to** ([HACKATHON_DEMO.md](HACKATHON_DEMO.md))
 — four beats, one punchline, and one governing rule: *the audience must
@@ -782,14 +788,18 @@ de-duplication, a truncated BLE payload resolving through the map, multipart
 upload with name sanitising, delete-with-unassign, and the VISION tab loading
 COCO-SSD and reporting at ~4 detections/s.
 
-**Not verified:** the BIN-CHAD and BinRemote firmware has not been compiled and
-the OpenSCAD has not been rendered — no toolchain for either was available in
-the environment this was written in. Nothing here has run on a real ESP32, a
-real phone's Bluetooth or USB, or a real ESP32-CAM. Every module was written
-against the documented library APIs and reviewed by hand. Treat the first build
-as a bring-up and expect to fix a missing include or a tight tolerance;
-[TROUBLESHOOTING.md](TROUBLESHOOTING.md) covers the eight failures you are
-actually going to hit first.
+**Not verified in the development environment:** the BIN-CHAD and BinRemote
+firmware was not compiled and the OpenSCAD was not rendered there — no toolchain
+for either was available on that machine — and neither the BLE/USB links nor an
+ESP32-CAM were exercised against real devices. Every module was written against
+the documented library APIs and reviewed by hand. Treat the first flash of an
+untouched board as a bring-up and expect to fix a missing include or a tight
+tolerance; [TROUBLESHOOTING.md](TROUBLESHOOTING.md) covers the eight failures
+you are actually going to hit first.
+
+**What the hardware actually does** is in the
+[build photos and demo videos](https://drive.google.com/drive/folders/1UGcReMnnkRWwXgr4NhLED4XH4fbJSmqP?usp=sharing),
+not in this paragraph.
 
 ---
 
